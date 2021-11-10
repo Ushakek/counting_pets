@@ -6,6 +6,13 @@ from .serializers import PetsSerializer
 
 
 class CreateView(APIView):
+    """ Класс представлений модели AllPets
+
+    Нужен для взаимодействия с моделями данных. Реализован на APIView.
+    Methods:
+        get: Получение всех данных из базы
+        post: Добавление в базу новых данных
+    """
     def get(self, request):
         pets = AllPets.objects.all()
         serializer = PetsSerializer(pets, many=True)

@@ -3,6 +3,11 @@ from .models import AllPets
 
 
 class PetsSerializer(serializers.Serializer):
+    """ Сериализатор класса AllPets
+
+    Повторяет поля класса AllPets, нужен для преобразования данных
+    python в json
+    """
     id = serializers.CharField(default=None)
     name = serializers.CharField(max_length=50)
     age = serializers.CharField()
@@ -11,8 +16,4 @@ class PetsSerializer(serializers.Serializer):
     created_at = serializers.ReadOnlyField()
 
     def create(self, validated_data):
-        print(validated_data['id'])
-        validated_data['age'] = float(validated_data['age'])
         return AllPets.objects.create(**validated_data)
-
-    # def
