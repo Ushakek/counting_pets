@@ -33,6 +33,13 @@ class CreateView(APIView):
 
 
 class PostPhotosView(APIView):
+    """ Класс представления модели PetPhoto
+
+    Нужен для загрузки фотографий к определённому питомцу. Реализован на APIView.
+    Methods:
+        post: принимает pk(id(для модели данных в AllPets) или uid(должен быть)) из строки,
+        который должен быть привязан к определённому питомцу.
+    """
     def post(self, request, pk):
         try:
             data = AllPets.objects.get(pk=pk)
@@ -40,8 +47,8 @@ class PostPhotosView(APIView):
             return Response({'message': {
                              'error': error}})
         file = request.data
-        print(request.data['photos'])
         image_serializer = PetPhotoSerializer(data=file)
+
         if image_serializer.is_valid(raise_exception=True):
             image_serializer.save()
             data.photos = [{'id': str(image_serializer.data.get('id')),
