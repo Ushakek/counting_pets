@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AllPets
+from .models import AllPets, PetPhoto
 
 
 class PetsSerializer(serializers.Serializer):
@@ -17,3 +17,11 @@ class PetsSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return AllPets.objects.create(**validated_data)
+
+
+class PetPhotoSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
+    photos = serializers.ImageField()
+
+    def create(self, validated_data):
+        return PetPhoto.objects.create(**validated_data)
