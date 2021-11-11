@@ -16,12 +16,16 @@ class CreateView(APIView):
         post: Добавление в базу новых данных
     """
     def get(self, request):
-        pets = AllPets.objects.all()[:20]
+        limit = request.data.get('limit', 20)
+        limit = round(limit)
+        # todo: Исключить поле, offset?
+        hash_photos = request.data.get('hash_photos', None)
+        pets = AllPets.objects.all()[:limit]
         serializer = PetsSerializer(pets, many=True)
 
         return Response({
-            "count": len(serializer.data),
-            "items": [serializer.data],
+            'count': len(serializer.data),
+            'items': [serializer.data],
         })
 
     def post(self, request):
