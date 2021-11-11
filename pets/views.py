@@ -1,7 +1,10 @@
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_api_key.permissions import HasAPIKey
+
 
 from .models import AllPets, PetPhoto
 from .serializers import PetsSerializer, PetPhotoSerializer
@@ -15,6 +18,8 @@ class CreateView(APIView):
         get: Получение всех данных из базы
         post: Добавление в базу новых данных
     """
+    permission_classes = [HasAPIKey | IsAuthenticated]
+
     def get(self, request):
         limit = request.data.get('limit', 20)
         limit = round(limit)
@@ -67,6 +72,8 @@ class PostPhotosView(APIView):
         post: принимает pk(id(для модели данных в AllPets) или uid(должен быть)) из строки,
         который должен быть привязан к определённому питомцу.
     """
+    permission_classes = [HasAPIKey | IsAuthenticated]
+
     def post(self, request, pk):
         try:
             data = AllPets.objects.get(pk=pk)
