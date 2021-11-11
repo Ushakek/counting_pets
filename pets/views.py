@@ -1,8 +1,9 @@
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import AllPets
+from .models import AllPets, PetPhoto
 from .serializers import PetsSerializer, PetPhotoSerializer
 
 
@@ -15,7 +16,7 @@ class CreateView(APIView):
         post: Добавление в базу новых данных
     """
     def get(self, request):
-        pets = AllPets.objects.all()
+        pets = AllPets.objects.all()[:20]
         serializer = PetsSerializer(pets, many=True)
 
         return Response({
@@ -30,6 +31,28 @@ class CreateView(APIView):
         if serializer.is_valid(raise_exception=True):
             pet_save = serializer.save()
         return Response(serializer.data)
+
+    def delete(self, request):
+        pets = request.data.get('ids')
+        pool_err = []
+        for idx, id_pet in enumerate(pets, start=1):
+            pet = AllPets.objects.get(pk=id_pet)
+            try:
+                pet.delete()
+            # todo: Не перехватывает ошибку
+            except AllPets.DoesNotExist:
+                pool_err.append({'id': str(id_pet),
+                                 'error': 'Pet with matching ID was not found'})
+            id_photo = pet.photos
+            if len(id_photo) > 0:
+                id_photo = id_photo[0].get('id')
+                photo = PetPhoto.objects.get(pk=id_photo)
+                photo.delete()
+                photo.photos.delete()
+
+            count = idx - len(pool_err)
+        return Response({'deleted': count,
+                         'errors': pool_err})
 
 
 class PostPhotosView(APIView):
