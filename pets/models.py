@@ -1,7 +1,19 @@
 import uuid
 
 from django.db import models
-from rest_framework import fields
+from django.contrib.postgres import fields
+
+
+class PetPhoto(models.Model):
+    """ Модель создания фотографий
+
+    photos(Image): Фотографии питомца
+    """
+    id = models.UUIDField(primary_key=True,
+                          default=uuid.uuid4,
+                          editable=False)
+    photos = models.ImageField(upload_to=f'images/%Y-%m-%d/')
+    url_to_upload = models.CharField(max_length=20, default='')
 
 
 class AllPets(models.Model):
@@ -20,16 +32,8 @@ class AllPets(models.Model):
     name = models.CharField(max_length=100)
     age = models.FloatField(default=0)
     type = models.CharField(max_length=50)
-    # photos = models.FilePathField()
+    photos = fields.ArrayField(base_field=PetPhoto, default=list)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
-
-
-# class PetPhoto:
-#     """ Модель создания фотографий
-#
-#     photos(Image): Фотографии питомца
-#     """
-#     photos = models.ImageField(null=True, upload_to=f'images_{uuid.uuid4()}')
