@@ -13,7 +13,6 @@ class PetPhoto(models.Model):
                           default=uuid.uuid4,
                           editable=False)
     photos = models.ImageField(upload_to=f'images/%Y-%m-%d/')
-    url_to_upload = models.CharField(max_length=20, default='')
 
 
 class AllPets(models.Model):
@@ -32,7 +31,7 @@ class AllPets(models.Model):
     name = models.CharField(max_length=100)
     age = models.FloatField(default=0)
     type = models.CharField(max_length=50)
-    photos = fields.ArrayField(base_field=PetPhoto, default=list)
+    photos = fields.ArrayField(base_field=models.JSONField(), default=list)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
