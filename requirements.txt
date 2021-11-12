@@ -1,0 +1,7 @@
+django==3.2.9
+psycopg2==2.9.1
+djangorestframework==3.12.4
+Markdown==3.3.4
+django-filter>=21.1
+pillow>=8.4.0
+djangorestframework-api-key>=2.1.0
